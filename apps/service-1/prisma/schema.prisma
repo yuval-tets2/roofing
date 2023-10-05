@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DB_URL")
 }
 
@@ -14,7 +14,7 @@ model Company {
   description     String?
   email           String
   foundingYear    Int?
-  id              String           @id @default(cuid()) @map("_id")
+  id              String           @id @default(auto()) @map("_id")
   logo            String?
   logoStatus      String?
   name            String
@@ -31,13 +31,13 @@ model Company {
 model OfficeLocation {
   city         String
   company      Company   @relation(fields: [companyId], references: [id])
-  companyId    String
+  companyId    String    @db.ObjectId
   country      String
   createdAt    DateTime  @default(now())
   description  String?
   email        String
   foundingYear Int?
-  id           String    @id @default(cuid()) @map("_id")
+  id           String    @id @default(auto()) @map("_id")
   logo         String?
   logoStatus   String?
   name         String
@@ -53,9 +53,9 @@ model OfficeLocation {
 
 model Pricing {
   createdAt         DateTime       @default(now())
-  id                String         @id @default(cuid()) @map("_id")
+  id                String         @id @default(auto()) @map("_id")
   officeLocation    OfficeLocation @relation(fields: [officeLocationId], references: [id])
-  officeLocationId  String
+  officeLocationId  String         @db.ObjectId
   price             Float
   roofingMaterialId String
   status            String
@@ -76,7 +76,7 @@ model City {
   createdAt          DateTime @default(now())
   id                 String   @id @default(auto()) @map("_id")
   market             Market   @relation(fields: [marketId], references: [id])
-  marketId           String
+  marketId           String   @db.ObjectId
   name               String
   roofingMaterialIds String
   state              String?
@@ -104,7 +104,7 @@ model Color {
   id                String          @id @default(auto()) @map("_id")
   pictureUrl        String?
   roofingMaterial   RoofingMaterial @relation(fields: [roofingMaterialId], references: [id])
-  roofingMaterialId String
+  roofingMaterialId String          @db.ObjectId
   status            String
   updatedAt         DateTime        @updatedAt
 }
@@ -130,7 +130,7 @@ model Address {
   county  String?
   id      String  @id @default(auto()) @map("_id")
   job     Job     @relation(fields: [jobId], references: [id])
-  jobId   String  @unique
+  jobId   String  @unique @db.ObjectId
   state   String?
   street1 String?
   street2 String?
@@ -140,9 +140,9 @@ model Address {
 model Bid {
   companyId String
   createdAt DateTime   @default(now())
-  id        String     @id @default(cuid()) @map("_id")
+  id        String     @id @default(auto()) @map("_id")
   job       Job        @relation(fields: [jobId], references: [id])
-  jobId     String
+  jobId     String     @db.ObjectId
   lineItems LineItem[]
   quoteUrl  String?
   startDate DateTime?
@@ -151,10 +151,10 @@ model Bid {
 
 model LineItem {
   bid           Bid      @relation(fields: [bidId], references: [id])
-  bidId         String
+  bidId         String   @db.ObjectId
   createdAt     DateTime @default(now())
   details       String
-  id            String   @id @default(cuid()) @map("_id")
+  id            String   @id @default(auto()) @map("_id")
   price         Float
   roofingTypeId String
   updatedAt     DateTime @updatedAt
@@ -163,7 +163,7 @@ model LineItem {
 
 model Detail {
   createdAt DateTime @default(now())
-  id        String   @id @default(cuid()) @map("_id")
+  id        String   @id @default(auto()) @map("_id")
   price     Float
   typeField String   @map("type")
   updatedAt DateTime @updatedAt
@@ -171,9 +171,9 @@ model Detail {
 
 model Image {
   createdAt DateTime @default(now())
-  id        String   @id @default(cuid()) @map("_id")
+  id        String   @id @default(auto()) @map("_id")
   job       Job      @relation(fields: [jobId], references: [id])
-  jobId     String
+  jobId     String   @db.ObjectId
   typeField String   @map("type")
   updatedAt DateTime @updatedAt
   url       String
@@ -181,9 +181,9 @@ model Image {
 
 model Measurement {
   createdAt         DateTime @default(now())
-  id                String   @id @default(cuid()) @map("_id")
+  id                String   @id @default(auto()) @map("_id")
   job               Job      @relation(fields: [jobId], references: [id])
-  jobId             String
+  jobId             String   @db.ObjectId
   total             Float
   typeField         String   @map("type")
   unitOfMeasurement String
@@ -192,9 +192,9 @@ model Measurement {
 
 model Report {
   createdAt DateTime @default(now())
-  id        String   @id @default(cuid()) @map("_id")
+  id        String   @id @default(auto()) @map("_id")
   job       Job      @relation(fields: [jobId], references: [id])
-  jobId     String
+  jobId     String   @db.ObjectId
   typeField String   @map("type")
   updatedAt DateTime @updatedAt
   url       String
