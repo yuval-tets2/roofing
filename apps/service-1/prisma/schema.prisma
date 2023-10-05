@@ -1,0 +1,201 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Company {
+  city            String
+  country         String
+  createdAt       DateTime         @default(now())
+  description     String?
+  email           String
+  foundingYear    Int?
+  id              String           @id @default(cuid()) @map("_id")
+  logo            String?
+  logoStatus      String?
+  name            String
+  officeLocations OfficeLocation[]
+  phoneNumber     String?
+  state           String?
+  status          String?
+  street1         String?
+  street2         String?
+  updatedAt       DateTime         @updatedAt
+  zipCode         String?
+}
+
+model OfficeLocation {
+  city         String
+  company      Company   @relation(fields: [companyId], references: [id])
+  companyId    String
+  country      String
+  createdAt    DateTime  @default(now())
+  description  String?
+  email        String
+  foundingYear Int?
+  id           String    @id @default(cuid()) @map("_id")
+  logo         String?
+  logoStatus   String?
+  name         String
+  phoneNumber  String?
+  pricing      Pricing[]
+  state        String?
+  status       String?
+  street1      String?
+  street2      String?
+  updatedAt    DateTime  @updatedAt
+  zipCode      String?
+}
+
+model Pricing {
+  createdAt         DateTime       @default(now())
+  id                String         @id @default(cuid()) @map("_id")
+  officeLocation    OfficeLocation @relation(fields: [officeLocationId], references: [id])
+  officeLocationId  String
+  price             Float
+  roofingMaterialId String
+  status            String
+  typeField         String         @map("type")
+  updatedAt         DateTime       @updatedAt
+}
+
+model Market {
+  cities    City[]
+  createdAt DateTime @default(now())
+  id        String   @id @default(auto()) @map("_id")
+  name      String
+  status    String
+  updatedAt DateTime @updatedAt
+}
+
+model City {
+  createdAt          DateTime @default(now())
+  id                 String   @id @default(auto()) @map("_id")
+  market             Market   @relation(fields: [marketId], references: [id])
+  marketId           String
+  name               String
+  roofingMaterialIds String
+  state              String?
+  status             String
+  updatedAt          DateTime @updatedAt
+}
+
+model RoofingMaterial {
+  colors       Color[]
+  createdAt    DateTime @default(now())
+  description  String?
+  id           String   @id @default(auto()) @map("_id")
+  manufacturer String
+  maxLifespan  Float
+  minLifespan  Float
+  name         String
+  status       String
+  supplier     String
+  updatedAt    DateTime @updatedAt
+}
+
+model Color {
+  color             String
+  createdAt         DateTime        @default(now())
+  id                String          @id @default(auto()) @map("_id")
+  pictureUrl        String?
+  roofingMaterial   RoofingMaterial @relation(fields: [roofingMaterialId], references: [id])
+  roofingMaterialId String
+  status            String
+  updatedAt         DateTime        @updatedAt
+}
+
+model Job {
+  address       Address?
+  addressId     String?
+  bids          Bid[]
+  createdAt     DateTime      @default(now())
+  id            String        @id @default(auto()) @map("_id")
+  images        Image[]
+  measurements  Measurement[]
+  reports       Report[]
+  selectedBidAt DateTime?
+  selectedBidId String?
+  status        String
+  updatedAt     DateTime      @updatedAt
+  userId        String
+}
+
+model Address {
+  city    String?
+  county  String?
+  id      String  @id @default(auto()) @map("_id")
+  job     Job     @relation(fields: [jobId], references: [id])
+  jobId   String  @unique
+  state   String?
+  street1 String?
+  street2 String?
+  zipCode String?
+}
+
+model Bid {
+  companyId String
+  createdAt DateTime   @default(now())
+  id        String     @id @default(cuid()) @map("_id")
+  job       Job        @relation(fields: [jobId], references: [id])
+  jobId     String
+  lineItems LineItem[]
+  quoteUrl  String?
+  startDate DateTime?
+  updatedAt DateTime   @updatedAt
+}
+
+model LineItem {
+  bid           Bid      @relation(fields: [bidId], references: [id])
+  bidId         String
+  createdAt     DateTime @default(now())
+  details       String
+  id            String   @id @default(cuid()) @map("_id")
+  price         Float
+  roofingTypeId String
+  updatedAt     DateTime @updatedAt
+  wasteFactor   Float
+}
+
+model Detail {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid()) @map("_id")
+  price     Float
+  typeField String   @map("type")
+  updatedAt DateTime @updatedAt
+}
+
+model Image {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid()) @map("_id")
+  job       Job      @relation(fields: [jobId], references: [id])
+  jobId     String
+  typeField String   @map("type")
+  updatedAt DateTime @updatedAt
+  url       String
+}
+
+model Measurement {
+  createdAt         DateTime @default(now())
+  id                String   @id @default(cuid()) @map("_id")
+  job               Job      @relation(fields: [jobId], references: [id])
+  jobId             String
+  total             Float
+  typeField         String   @map("type")
+  unitOfMeasurement String
+  updatedAt         DateTime @updatedAt
+}
+
+model Report {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid()) @map("_id")
+  job       Job      @relation(fields: [jobId], references: [id])
+  jobId     String
+  typeField String   @map("type")
+  updatedAt DateTime @updatedAt
+  url       String
+}
