@@ -199,3 +199,9 @@ model Report {
   updatedAt DateTime @updatedAt
   url       String
 }
+
+model Ss {
+  createdAt DateTime @default(now())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  updatedAt DateTime @updatedAt
+}
